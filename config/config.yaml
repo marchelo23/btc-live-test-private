@@ -2,8 +2,8 @@
 
 # Data Ingestion Settings
 data:
-  exchange: "binance"  # Changed from kraken - more generous rate limits
-  symbol: "BTC/USDT"   # Binance uses USDT
+  exchange: "coinbase"  # No geo-restrictions, works with GitHub Actions
+  symbol: "BTC/USD"     # Coinbase uses USD
   base_timeframe: "30m"  # Base timeframe for data fetching
   lookback_days: 60      # Days of historical data to fetch
 
