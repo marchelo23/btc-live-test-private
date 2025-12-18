@@ -1,0 +1,83 @@
+# BTC MLOps Configuration File
+
+# Data Ingestion Settings
+data:
+  exchange: "binance"
+  symbol: "BTC/USDT"
+  base_timeframe: "30m"  # Base timeframe for data fetching
+  lookback_days: 60      # Days of historical data to fetch
+
+  # Directories
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+
+# Feature Engineering Settings
+features:
+  # Technical Indicators
+  indicators:
+    rsi_period: 14
+    macd_fast: 12
+    macd_slow: 26
+    macd_signal: 9
+    bollinger_period: 20
+    bollinger_std: 2
+
+  # Rolling Windows
+  rolling_windows: [5, 10, 20, 30]
+
+  # Volatility Windows
+  volatility_windows: [10, 20, 30]
+
+# Model Training Settings
+model:
+  # Prediction Horizons (in minutes)
+  horizons:
+    - 30    # 30 minutes
+    - 60    # 1 hour
+    - 180   # 3 hours
+    - 360   # 6 hours
+    - 720   # 12 hours
+
+  # XGBoost Hyperparameters
+  xgboost:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 3
+    gamma: 0.1
+    reg_alpha: 0.1
+    reg_lambda: 1.0
+    random_state: 42
+
+  # Training Parameters
+  test_size: 0.2
+  validation_size: 0.1
+
+  # Model Storage
+  models_dir: "models"
+  model_prefix: "xgb_btc"
+
+# API Settings
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+  workers: 1
+  log_level: "info"
+
+  # Model Cache TTL (seconds)
+  cache_ttl: 3600
+
+# Automation Settings
+automation:
+  retrain_frequency_hours: 24  # Retrain every 24 hours
+  min_improvement_threshold: 0.02  # 2% improvement required to replace model
+
+# Logging Settings
+logging:
+  level: "INFO"
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
+  log_dir: "logs"
+  retention: "7 days"
