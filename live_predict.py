@@ -119,10 +119,17 @@ def run_live_prediction():
     ingestion = DataIngestion()
     try:
         df_raw = ingestion.fetch_ohlcv(lookback_days=3)
+
+        if df_raw is None or df_raw.empty:
+            print(f"❌ Error: No data fetched from exchange")
+            return
+
         current_price = df_raw.iloc[-1]['close']
         print(f"✅ Current BTC price: ${current_price:,.2f}")
     except Exception as e:
         print(f"❌ Error fetching data: {e}")
+        import traceback
+        traceback.print_exc()
         return
 
     # Load models and make predictions
