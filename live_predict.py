@@ -118,8 +118,9 @@ def run_live_prediction():
     print("\n📥 Fetching latest BTC data...")
     ingestion = DataIngestion()
     try:
-        # Use 0.05 days (1.2 hours) - minimal data needed for features
-        df_raw = ingestion.fetch_ohlcv(lookback_days=0.05)
+        # Use 2 days to ensure enough data for all technical indicators
+        # (RSI needs 14, Bollinger 20, MACD 26, rolling windows 30 periods)
+        df_raw = ingestion.fetch_ohlcv(lookback_days=2)
 
         if df_raw is None or df_raw.empty:
             print(f"❌ Error: No data fetched from exchange")
