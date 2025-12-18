@@ -64,9 +64,17 @@ def validate_pending_predictions(df):
     print(f"\n🔍 Validating {len(pending)} pending predictions...")
 
     # Fetch current data for validation
-    ingestion = DataIngestion()
     try:
-        df_current = ingestion.fetch_ohlcv(lookback_days=1)
+        # Use direct ccxt call with limit to avoid rate limiting
+        import ccxt
+        exchange = ccxt.kraken()
+        ohlcv = exchange.fetch_ohlcv('BTC/USD', '30m', limit=50)  # 1 day = 48 candles
+
+        df_current = pd.DataFrame(
+            ohlcv,
+            columns=['timestamp', 'open', 'high', 'low', 'close', 'volume']
+        )
+        df_current['timestamp'] = pd.to_datetime(df_current['timestamp'], unit='ms')
     except Exception as e:
         print(f"⚠️  Could not fetch data for validation: {e}")
         return df
