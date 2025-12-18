@@ -2,8 +2,8 @@
 
 # Data Ingestion Settings
 data:
-  exchange: "binance"
-  symbol: "BTC/USDT"
+  exchange: "kraken"
+  symbol: "BTC/USD"
   base_timeframe: "30m"  # Base timeframe for data fetching
   lookback_days: 60      # Days of historical data to fetch
 
