@@ -118,9 +118,17 @@ def run_live_prediction():
     print("\n📥 Fetching latest BTC data...")
     ingestion = DataIngestion()
     try:
-        # Use 2 days to ensure enough data for all technical indicators
-        # (RSI needs 14, Bollinger 20, MACD 26, rolling windows 30 periods)
-        df_raw = ingestion.fetch_ohlcv(lookback_days=2)
+        # Use simple limit approach (avoids rate limiting issues)
+        # 200 candles of 30min = ~4 days of data
+        import ccxt
+        exchange = ccxt.kraken()
+        ohlcv = exchange.fetch_ohlcv('BTC/USD', '30m', limit=200)
+
+        df_raw = pd.DataFrame(
+            ohlcv,
+            columns=['timestamp', 'open', 'high', 'low', 'close', 'volume']
+        )
+        df_raw['timestamp'] = pd.to_datetime(df_raw['timestamp'], unit='ms')
 
         if df_raw is None or df_raw.empty:
             print(f"❌ Error: No data fetched from exchange")
@@ -138,6 +146,12 @@ def run_live_prediction():
     print("\n🤖 Loading models and making predictions...")
     inference = ModelInference()
 
+    # Prepare features from raw data
+    features = inference.prepare_features_from_raw(df_raw)
+    if features is None:
+        print("❌ Error: Failed to prepare features")
+        return
+
     timestamp_pred = datetime.now()
     new_predictions = []
 
@@ -146,8 +160,8 @@ def run_live_prediction():
             # Extract integer horizon from string (e.g., '30min' -> 30)
             horizon_int = int(horizon_key.replace('min', ''))
 
-            # Make prediction
-            result = inference.predict_single_horizon(df_raw, horizon_int)
+            # Make prediction with prepared features
+            result = inference.predict_single_horizon(features, horizon_int)
 
             if result is None:
                 print(f"⚠️  Skipping {timeframe_label}: No prediction")

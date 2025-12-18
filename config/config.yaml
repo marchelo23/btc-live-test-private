@@ -2,9 +2,9 @@
 
 # Data Ingestion Settings
 data:
-  exchange: "bitstamp"  # Public API, no keys needed, no geo-restrictions
-  symbol: "BTC/USD"     # Bitstamp uses USD
-  base_timeframe: "30m"  # Base timeframe for data fetching (using "1800" for 30min)
+  exchange: "kraken"    # Using Kraken with limit parameter (like working project)
+  symbol: "BTC/USD"     # Kraken uses USD
+  base_timeframe: "30m"  # Base timeframe for data fetching
   lookback_days: 60      # Days of historical data to fetch
 
   # Directories
