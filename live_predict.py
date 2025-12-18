@@ -118,8 +118,8 @@ def run_live_prediction():
     print("\n📥 Fetching latest BTC data...")
     ingestion = DataIngestion()
     try:
-        # Use 0.1 days (2.4 hours) to avoid Kraken rate limiting
-        df_raw = ingestion.fetch_ohlcv(lookback_days=0.1)
+        # Use 0.05 days (1.2 hours) - minimal data needed for features
+        df_raw = ingestion.fetch_ohlcv(lookback_days=0.05)
 
         if df_raw is None or df_raw.empty:
             print(f"❌ Error: No data fetched from exchange")
