@@ -118,7 +118,8 @@ def run_live_prediction():
     print("\n📥 Fetching latest BTC data...")
     ingestion = DataIngestion()
     try:
-        df_raw = ingestion.fetch_ohlcv(lookback_days=3)
+        # Use 0.1 days (2.4 hours) to avoid Kraken rate limiting
+        df_raw = ingestion.fetch_ohlcv(lookback_days=0.1)
 
         if df_raw is None or df_raw.empty:
             print(f"❌ Error: No data fetched from exchange")
@@ -141,8 +142,11 @@ def run_live_prediction():
 
     for horizon_key, timeframe_label in HORIZONS.items():
         try:
+            # Extract integer horizon from string (e.g., '30min' -> 30)
+            horizon_int = int(horizon_key.replace('min', ''))
+
             # Make prediction
-            result = inference.predict_single_horizon(df_raw, horizon_key)
+            result = inference.predict_single_horizon(df_raw, horizon_int)
 
             if result is None:
                 print(f"⚠️  Skipping {timeframe_label}: No prediction")
@@ -152,8 +156,7 @@ def run_live_prediction():
             direction = 'UP' if predicted_price > current_price else 'DOWN'
 
             # Calculate target time
-            horizon_minutes = int(horizon_key.replace('min', ''))
-            target_time = timestamp_pred + timedelta(minutes=horizon_minutes)
+            target_time = timestamp_pred + timedelta(minutes=horizon_int)
 
             # Create prediction entry matching historical format
             prediction = {
