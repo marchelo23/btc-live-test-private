@@ -2,9 +2,9 @@
 
 # Data Ingestion Settings
 data:
-  exchange: "coinbase"  # No geo-restrictions, works with GitHub Actions
-  symbol: "BTC/USD"     # Coinbase uses USD
-  base_timeframe: "30m"  # Base timeframe for data fetching
+  exchange: "bitstamp"  # Public API, no keys needed, no geo-restrictions
+  symbol: "BTC/USD"     # Bitstamp uses USD
+  base_timeframe: "30m"  # Base timeframe for data fetching (using "1800" for 30min)
   lookback_days: 60      # Days of historical data to fetch
 
   # Directories
